@@ -1,42 +1,21 @@
 const getStateNeighbors = (left, rigth) => ((left === 0 && rigth === 0) || (left === 1 && rigth === 1)) ? 0 : 1;
 
 const init = (states, days) => {
-  if (!states || states.length > 8) {
-    console.log("States are invalid");
-    return;
-  }
-
-  let previousState = new Array(8);
-  let nextState = new Array(8);
+  let previousState = new Array(states.length);
+  let nextState = new Array(states.length);
 
   previousState = states;
 
   for (let i = 0; i < days; i++) {
-    for (let index = 0; index < previousState.length; index++) {
-      if (index === 0) {
-        nextState[index] = getStateNeighbors(0, previousState[index + 1]);
-        continue;
-      }
+    nextState = previousState.map((item, index) => {
+      if (index === 0) return getStateNeighbors(0, previousState[index + 1]);     
 
-      if (index === 1) {
-        nextState[index] = getStateNeighbors(previousState[0], previousState[index + 1]);
-        continue;
-      }
+      if (index === states.length - 1) return getStateNeighbors(previousState[index - 1], 0);      
 
-      if (index === 6) {
-        nextState[index] = getStateNeighbors(previousState[index - 1], previousState[previousState.length - 1]);
-        continue;
-      }
-
-      if (index === 7) {
-        nextState[index] = getStateNeighbors(previousState[index - 1], 0);
-        continue;
-      }
-
-      nextState[index] = getStateNeighbors(previousState[index - 1], previousState[index + 1]);
-    }
+      return getStateNeighbors(previousState[index - 1], previousState[index + 1]);    
+    });
     previousState = nextState;
-    nextState = new Array(8);
+    nextState = new Array(states.length);
   }
 
   console.log("OUTPUT: " + previousState);
